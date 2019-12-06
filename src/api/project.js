@@ -7,3 +7,10 @@ export function getProjectList(data){
         data
     })
 }
+export function getProjectDetail(data){
+    return request({
+        url:'/api/constructor/project/getProjectDetail',
+        method:'post',
+        data
+    })
+}

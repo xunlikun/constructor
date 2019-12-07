@@ -6,6 +6,7 @@ import Router from '@/router'
 const state = {
     name:'user',
     userInfo:localStorages.get('userInfo') ? JSON.parse(localStorages.get('userInfo')) : {},
+    companyInfo:localStorages.get('companyInfo') ? JSON.parse(localStorages.get('companyInfo')) : {},
     register:localStorages.get('register') ? JSON.parse(localStorages.get('register')) : {
             "loginName":"",
             "password":"",
@@ -100,7 +101,14 @@ const mutations = {
         state.token = ''
         localStorages.clear()
         ViewUI.Message.warning('您已登出！')
-        Router.replace({path:'/login'})
+        // Router.replace({name:'Login'})
+        setTimeout(()=>{
+            window.location.reload()
+          },500)
+    },
+    SET_COMPANY_INFO(state,op){
+        state.companyInfo = op
+        localStorages.set('companyInfo',op,1000*60*60*6)
     }
 }
 
@@ -123,7 +131,11 @@ const actions = {
     },
     getCompanyInfo({commit,state}){
         getCompanyInfo().then(res => {
-            console.log(res)
+            if(res.status == 500){
+                ViewUI.Message.error('获取公司信息失败！')
+            }else{
+                commit('SET_COMPANY_INFO',res.data)
+            }
         })
     },
     register({commit,state},option){

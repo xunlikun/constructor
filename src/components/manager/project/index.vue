@@ -1,9 +1,9 @@
 <template>
     <div>
-        <template v-if="token && userInfo.userStatus != 0">
+        <template v-if="token && userInfo.userStatus == 0">
             <Temp></Temp>
         </template>
-        <template v-else>
+        <template v-else-if="token">
             <div class='filter'>
                 <Form ref="op" :model="op" :rules="ruleCustom" :label-width="80" inline>
                 <FormItem label="项目编号" prop="projectCode">
@@ -162,7 +162,7 @@ export default {
         ...mapActions(['getCompanyInfo','getProjectList']),
         @track.loading
         async init(){
-            if(this.userInfo.userStatus != 0){
+            if(this.userInfo.userStatus == 0){
                 this.getCompanyInfo()
             }else{
                 let query = JSON.parse(JSON.stringify(this.op))

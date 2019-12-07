@@ -3,8 +3,6 @@ import Router from 'vue-router'
 
 import store from '@/store'
 
-import { getToken } from '@/utils/auth'
-
 Vue.use(Router)
 
 export default new Router({
@@ -13,7 +11,7 @@ export default new Router({
       path: '/',
       redirect:'/login',
       beforeEnter(to,from,next){
-        if(getToken()){
+        if(store.getters.token){
           next('/manager')
         }else{
           next()
@@ -25,7 +23,7 @@ export default new Router({
       name: 'Login',
       component: () => import('@/views/login'),
       beforeEnter(to,from,next){
-        if(getToken()){
+        if(store.getters.token){
           next('/manager')
         }else{
           next()
@@ -72,7 +70,7 @@ export default new Router({
           next()
         }else{
           store.commit('DELETE_TOKEN')
-          next('/')
+          next('/login')
         }
       },
       children:[
@@ -80,37 +78,72 @@ export default new Router({
           path: '/manager/project',
           name:'Project',
           component: () => import('@/components/manager/project'),
-          meta:{keepAlive:true}
+          meta:{keepAlive:true,title:['Project']}
         },
         {
           path: '/manager/project/projectDetail',
           name:'ProjectDetail',
           component: () => import('@/components/manager/project/projectDetail'),
-          meta:{keepAlive:true}
+          meta:{keepAlive:true,title:['Project','ProjectDetail'] },
+          beforeEnter(to,from,next){
+            if(store.getters.userInfo.userStatus == 1){
+              next()
+            }else{
+              next('/manager')
+            }
+          }
         },
         {
           path: '/manager/contract',
           name:'Contract',
           component: () => import('@/components/manager/contract'),
-          meta:{keepAlive:true}
+          meta:{keepAlive:true,title:['Contract']},
+          beforeEnter(to,from,next){
+            if(store.getters.userInfo.userStatus == 1){
+              next()
+            }else{
+              next('/manager')
+            }
+          }
         },
         {
           path:'/manager/contract/contractDetail',
           name:"ContractDetail",
           component: () => import('@/components/manager/contract/contractDetail'),
-          meta:{keepAlive:true}
+          meta:{keepAlive:true,title:['Contract','ContractDetail'] },
+          beforeEnter(to,from,next){
+            if(store.getters.userInfo.userStatus == 1){
+              next()
+            }else{
+              next('/manager')
+            }
+          }
         },
         {
           path: '/manager/employee',
           name:'Employee',
           component: () => import('@/components/manager/employee'),
-          meta:{keepAlive:true}
+          meta:{keepAlive:true,title:['Employee']},
+          beforeEnter(to,from,next){
+            if(store.getters.userInfo.userStatus == 1){
+              next()
+            }else{
+              next('/manager')
+            }
+          }
         },
         {
           path: '/manager/employee/employeeDetail',
           name:'EmployeeDetail',
           component: () => import('@/components/manager/employee/employeeDetail'),
-          meta:{keepAlive:true}
+          meta:{keepAlive:true,title:['Employee','EmployeeDetail']},
+          beforeEnter(to,from,next){
+            if(store.getters.userInfo.userStatus == 1){
+              next()
+            }else{
+              next('/manager')
+            }
+          }
         }
       ]
     }

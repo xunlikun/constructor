@@ -1,4 +1,4 @@
-<style scoped>
+<style lang='scss' scoped>
     .layout{
         border: 1px solid #d7dde4;
         background: #f5f7f9;
@@ -19,7 +19,15 @@
     .layout-nav{
         width: 420px;
         margin: 0 auto;
+        width: 80%;
+        min-width: 620px;
         margin-right: 20px;
+        >.layout-nav-item{
+            float: left;
+        }
+        >.layout-nav-item-right{
+            float: right;
+        }
     }
     .layout-footer-center{
         text-align: center;
@@ -32,18 +40,30 @@
                 <Menu mode="horizontal" theme="dark" :active-name="currentMenuItemNum" @on-select='loading'>
                     <div class="layout-logo"></div>
                     <div class="layout-nav">
-                        <MenuItem name="1" to='/manager/project'>
+                        <MenuItem class='layout-nav-item' name="1" to='/manager/project' v-if="userInfo.userStatus == 1">
                             <Icon type="ios-navigate"></Icon>
                             项目管理
                         </MenuItem>
-                        <MenuItem name="2" to='/manager/contract'>
+                        <MenuItem class='layout-nav-item' name="2" to='/manager/contract' v-if="userInfo.userStatus == 1">
                             <Icon type="ios-keypad"></Icon>
                             合同管理
                         </MenuItem>
-                        <MenuItem name="3" to='/manager/employee'>
+                        <MenuItem class='layout-nav-item' name="3" to='/manager/employee' v-if="userInfo.userStatus == 1">
                             <Icon type="ios-analytics"></Icon>
                             人员管理
                         </MenuItem>
+                            <Dropdown @on-click="calculate" class='layout-nav-item-right' trigger="click" style="margin-left: 20px">
+                                <a href="javascript:void(0)" style="color:#fff;font-size:14px">
+                                    {{companyInfo.entityName}}
+                                    <Icon type="ios-arrow-down"></Icon>
+                                </a>
+                                <DropdownMenu slot="list">
+                                    <DropdownItem name="basic">基本信息</DropdownItem>
+                                    <DropdownItem name='certificate'>资质</DropdownItem>
+                                    <DropdownItem name='safe'>安全</DropdownItem>
+                                    <DropdownItem name='logOut'>退出登录</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                     </div>
                 </Menu>
             </Header>
@@ -56,6 +76,7 @@
 </template>
 <script>
 import track from '@/utils/track.js'
+import { mapGetters, mapMutations } from 'vuex'
     export default {
         data() {
             return {
@@ -66,15 +87,17 @@ import track from '@/utils/track.js'
             next(false)
         },
         computed: {
+            ...mapGetters(['companyInfo','userInfo']),
             currentMenuItemNum:{
                 get(){
                     let op = {
-                        "contract":'2',
-                        "project":'1',
-                        "employee":'3'
+                        "Contract":'2',
+                        "Project":'1',
+                        "Employee":'3'
                     }
+                    console.log(this.$route)
                     for (const key in op) {
-                        if(key == this.$route.name.toLocaleLowerCase()){
+                        if(this.$route.meta.title.includes(key)){
                             return op[key]
                         }
                     }
@@ -86,9 +109,22 @@ import track from '@/utils/track.js'
             }
         },
         methods: {
+            ...mapMutations(['DELETE_TOKEN']),
             @track.loading
             loading(name){
                 this.currentMenuItemNum = name
+            },
+            @track.loading
+            calculate(name){
+                switch (name) {
+                    case 'logOut':
+                        this.DELETE_TOKEN()
+                        break;
+                
+                    default:
+                        break;
+                }
+                
             }
         },
     }

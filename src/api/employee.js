@@ -7,3 +7,17 @@ export function getEmployeeList(data){
         data
     })
 }
+export function getEmployeeDetail(data){
+    return request({
+        url:'/api/constructor/employee/getEmployeeDetail',
+        method:'post',
+        data
+    })
+}
+export function saveEmployeeDetail(data){
+    return request({
+        url:'/api/constructor/employee/save',
+        method:'post',
+        data
+    })
+}

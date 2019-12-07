@@ -14,3 +14,17 @@ export function getContractDetail(data){
         data
     })
 }
+export function getNextContract(data){
+    return request({
+        url:'/api/constructor/contract/getNextContract',
+        method:'post',
+        data
+    })
+}
+export function getPreviousContract(data){
+    return request({
+        url:'/api/constructor/contract/getPreviousContract',
+        method:'post',
+        data
+    })
+}

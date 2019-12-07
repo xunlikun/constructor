@@ -5,7 +5,12 @@ export default {
         
           descriptor.value = async function() {
             store.commit('SET_GLOADING',true)
-            await oldValue.apply(this, arguments);
+            try {
+              await oldValue.apply(this, arguments);
+            } catch (error) {
+              store.commit('SET_GLOADING',false)
+            }
+            
             store.commit('SET_GLOADING',false)
           };
         

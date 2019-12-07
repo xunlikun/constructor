@@ -105,6 +105,12 @@ export default new Router({
           name:'Employee',
           component: () => import('@/components/manager/employee'),
           meta:{keepAlive:true}
+        },
+        {
+          path: '/manager/employee/employeeDetail',
+          name:'EmployeeDetail',
+          component: () => import('@/components/manager/employee/employeeDetail'),
+          meta:{keepAlive:true}
         }
       ]
     }

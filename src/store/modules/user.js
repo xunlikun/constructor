@@ -20,10 +20,14 @@ const state = {
                 ]
             }
         },
-    token:getToken()
+    token:getToken(),
+    tempToken:''
 }
 
 const mutations = {
+    SET_TEMP_TOKEN(state,value){
+        state.tempToken = value
+    },
     SET_REGISTER(state,op){
         for (const key in op) {
             state.register[key] = op[key]

@@ -21,6 +21,10 @@ service.interceptors.request.use(
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
       config.headers['authorization'] = store.getters.token
+      if(store.getters.tempToken){
+        config.headers['authorization'] = store.getters.tempToken
+        store.commit('SET_TEMP_TOKEN','')
+      }
     }
     if(config.headers.json == true){
       config.headers['Content-Type'] = 'application/json'

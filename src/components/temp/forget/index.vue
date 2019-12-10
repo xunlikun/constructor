@@ -5,23 +5,22 @@
     </div>
     <div class='login'>
         <Form ref="formInline" :model="formInline" :rules="ruleInline">
-            <FormItem prop="user" >
-                <Input type="text" v-model="formInline.user" placeholder="Username">
+            <FormItem prop="loginName">
+                <Input type="text" v-model="formInline.loginName" placeholder="登录名">
                     <Icon type="ios-person-outline" slot="prepend"></Icon>
                 </Input>
             </FormItem>
-            <FormItem prop="text" >
-                <Input type="text" v-model="formInline.text" placeholder="Auth">
+            <FormItem prop="verificationCode">
+                <Input type="text" v-model="formInline.verificationCode" placeholder="手机验证码">
                     <Icon type="ios-lock-outline" slot="prepend"></Icon>
                 </Input>
             </FormItem>
             <FormItem style="text-align:right">
-                <router-link to="/reset">
+                <!-- <router-link to="/reset"> -->
                     <Button type="primary" @click="handleSubmit('formInline')">
-                        
                         下一步
                     </Button>
-                </router-link>
+                <!-- </router-link> -->
             </FormItem>
         </Form>
         <div class="caculate">
@@ -36,20 +35,44 @@
 <script>
     export default {
         data () {
+            const validateAuth = (rule, value, callback) => {
+
+                checkVerificationCode({mobile:this.data.mobile,verificationCode:value,type:'resetPassWord'}).then(res => {
+                    if(res.status == '200'){
+                        this.SET_TEMP_TOKEN(res.data)
+                        callback();
+                        
+                    }else{
+                        
+                        callback(new Error('验证码出错!'));
+                    }
+                })
+                
+
+            };
+            const validateLoginName = (rule, value, callback) => {
+
+                checkVerificationCode({mobile:this.data.mobile,verificationCode:value,type:'resetPassWord'}).then(res => {
+                    if(res.status == '200'){
+                        this.SET_TEMP_TOKEN(res.data)
+                        callback();
+                        
+                    }else{
+                        
+                        callback(new Error('验证码出错!'));
+                    }
+                })
+                
+
+            };
             return {
-                formInline: {
-                    user: '',
-                    password: '',
-                    passwdCheck:'',
-                    tel:''
-                },
+                formInline: {},
                 ruleInline: {
-                    user: [
-                        { required: true, message: '请输入', trigger: 'blur' }
+                    loginName: [
+                        { validator: validateLoginName, trigger: 'blur' }
                     ],
-                    password: [
-                        { required: true, message: '请输入', trigger: 'blur' },
-                        { type: 'string', min: 6, message: '密码不能少于六位', trigger: 'blur' }
+                    verificationCode: [
+                        { validator: validateAuth, trigger: 'input' },
                     ]
                 }
             }
@@ -58,9 +81,10 @@
             handleSubmit(name) {
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        this.$Message.success('Success!');
+                        // this.$Message.success('Success!');
+                        
                     } else {
-                        this.$Message.error('Fail!');
+                        this.$Message.error('失败!');
                     }
                 })
             }

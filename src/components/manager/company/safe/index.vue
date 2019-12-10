@@ -33,13 +33,38 @@
             </div>
         </TabPane>
         <TabPane label="更改手机">
+            <div class='main'>
+                <Form ref="formInlineMobile" :model="dataMobile" :rules="ruleInlineMobile">
+                    <Row>
+                        <Col span="12">
+                            <FormItem prop="verificationCode">
+                                <Input type="text" v-model="dataMobile.verificationCode" placeholder="旧手机验证码">
+                                    <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                                </Input>
+                            </FormItem>
+                        </Col>
+                        <Col span="12" style='padding-left:25px'><Button type="primary" :disabled='sendingAuth' @click=" !sendingAuth && sendVerificationCode({mobile:data.mobile,type:'resetMobile'})">{{sendingAuth ? mis :'获取验证码'}}</Button></Col>
+                    </Row>
+                    <FormItem prop="newMobile" label="新手机号">
+                        <Input type="text" v-model="dataMobile.newMobile" placeholder="新手机号">
+                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                        </Input>
+                    </FormItem>
+                    <FormItem style="text-align:right">
+                        <!-- <router-link to="/companyInfo"> -->
+                        <Button type="primary" @click="handleSubmit('formInlineMobile')">更新</Button>
+                        <!-- </router-link> -->
+                        
+                    </FormItem>
+                </Form>
+            </div>
         </TabPane>
     </Tabs>
 </template>
 <script>
 import { resetUserInfo } from '@/api/user.js'
 import { sendVerificationCode,checkVerificationCode } from '@/api/user.js'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 export default {
         data() {
             const validatePassCheck = (rule, value, callback) => {
@@ -72,7 +97,22 @@ export default {
 
                 checkVerificationCode({mobile:this.data.mobile,verificationCode:value,type:'resetPassWord'}).then(res => {
                     if(res.status == '200'){
+                        this.SET_TEMP_TOKEN(res.data)
+                        callback();
                         
+                    }else{
+                        
+                        callback(new Error('验证码出错!'));
+                    }
+                })
+                
+
+            };
+            const validateAuthMobile = (rule, value, callback) => {
+
+                checkVerificationCode({mobile:this.dataMobile.mobile,verificationCode:value,type:'resetMobile'}).then(res => {
+                    if(res.status == '200'){
+                        this.SET_TEMP_TOKEN(res.data)
                         callback();
                         
                     }else{
@@ -86,8 +126,9 @@ export default {
             return {
                 sendingAuth:false,
                 mis:5,
-                currentToken:'',
                 data:{},
+                dataMobile:{},
+
             ruleInline: {
                     verificationCode: [
                         { validator: validateAuth, trigger: 'input' }
@@ -99,27 +140,44 @@ export default {
                          { validator: validatePassCheckAG, trigger: 'blur' }
                     ]
                 },
+            ruleInlineMobile:{
+                verificationCode: [
+                        { validator: validateAuthMobile, trigger: 'input' }
+                    ]
+            }
             }
         },
         created() {
             this.data.mobile = this.userInfo.mobile
+            this.dataMobile.mobile = this.userInfo.mobile
         },
         computed: {
             ...mapGetters(['userInfo'])
         },
         methods: {
+            ...mapMutations(['SET_TEMP_TOKEN']),
             async handleSubmit(name) {
                 this.$refs[name].validate(async (valid) => {
                     if (valid) {
 
-                        console.log(this.data.password)
-                        let msg = (await resetUserInfo({password:this.data.password})).status
+                        if(name == "formInlineMobile"){
+                            let msg = (await resetUserInfo({mobile:this.dataMobile.newMobile})).status
+
+                            if(msg == 200){
+                                this.$Message.success('手机修改成功!');
+                            }else{
+                                this.$Message.error('手机修改失败!');
+                            }
+                        }else{
+                            let msg = (await resetUserInfo({password:this.data.password})).status
 
                             if(msg == 200){
                                 this.$Message.success('密码修改成功!');
                             }else{
                                 this.$Message.error('密码修改失败!');
                             }
+                        }
+                        
                         
                         
                     } else {
@@ -133,7 +191,6 @@ export default {
                 sendVerificationCode(data).then(res => {
                     if(res.status == '200'){
                         this.sendingAuth = true
-                        this.currentToken = res.data
                         let timer = setInterval(()=>{
                             this.mis --
                             if(this.mis == 0){

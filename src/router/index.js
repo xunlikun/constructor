@@ -75,6 +75,18 @@ export default new Router({
       },
       children:[
         {
+          path: '/manager/company/basic',
+          name:'Basic',
+          component: () => import('@/components/manager/company/basic'),
+          meta:{keepAlive:true,title:['Company','Basic']}
+        },
+        {
+          path: '/manager/company/safe',
+          name:'Safe',
+          component: () => import('@/components/manager/company/safe'),
+          meta:{keepAlive:true,title:['Company','Safe']}
+        },
+        {
           path: '/manager/project',
           name:'Project',
           component: () => import('@/components/manager/project'),

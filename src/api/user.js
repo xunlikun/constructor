@@ -42,3 +42,17 @@ export function getCompanyInfo(){
         method:'post'
     })
 }
+export function updataCompanyInfo(data){
+    return request({
+        url:'/api/constructor/userEntity/updateEntityInfo',
+        method:'post',
+        data
+    })
+}
+export function resetUserInfo(data){
+    return request({
+        url:'/api/constructor/user/resetUserInfo',
+        method:'post',
+        data
+    })
+}

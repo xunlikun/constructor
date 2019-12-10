@@ -59,7 +59,6 @@
                                 </a>
                                 <DropdownMenu slot="list">
                                     <DropdownItem name="basic">基本信息</DropdownItem>
-                                    <DropdownItem name='certificate'>资质</DropdownItem>
                                     <DropdownItem name='safe'>安全</DropdownItem>
                                     <DropdownItem name='logOut'>退出登录</DropdownItem>
                                 </DropdownMenu>
@@ -120,7 +119,12 @@ import { mapGetters, mapMutations } from 'vuex'
                     case 'logOut':
                         this.DELETE_TOKEN()
                         break;
-                
+                    case 'basic':
+                        this.$router.push({name:'Basic'})
+                        break;
+                    case 'safe':
+                        this.$router.push({name:'Safe'})
+                        break;
                     default:
                         break;
                 }

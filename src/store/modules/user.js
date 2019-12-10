@@ -117,8 +117,8 @@ const actions = {
         login(option).then(res => {
             if(res.status == 200){
                 localStorages.clear()
-                localStorages.set('userInfo',{userName:res.data.userName,userStatus:res.data.userStatus})
-                state.userInfo = {userName:res.data.userName,userStatus:res.data.userStatus}
+                localStorages.set('userInfo',{userName:res.data.userName,userStatus:res.data.userStatus,mobile:res.data.mobile})
+                state.userInfo = {userName:res.data.userName,userStatus:res.data.userStatus,mobile:res.data.mobile}
                 setToken(res.data.token,{expires:1000*60*60})
                 state.token = res.data.token
                 ViewUI.Message.success('登录成功！')

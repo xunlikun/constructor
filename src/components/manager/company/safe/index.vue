@@ -1,0 +1,159 @@
+<template>
+    <Tabs size="small">
+        <TabPane label="更改密码">
+            <div class='main'>
+                <Form ref="formInline" :model="data" :rules="ruleInline">
+                    <Row>
+                        <Col span="12">
+                            <FormItem prop="verificationCode" >
+                                <Input type="text" v-model="data.verificationCode" placeholder="验证码">
+                                    <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                                </Input>
+                            </FormItem>
+                        </Col>
+                        <Col span="12" style='padding-left:25px'><Button type="primary" :disabled='sendingAuth' @click=" !sendingAuth && sendVerificationCode({mobile:data.mobile,type:'resetPassWord'})">{{sendingAuth ? mis :'获取验证码'}}</Button></Col>
+                    </Row>
+                    <FormItem prop="password" label="新密码">
+                        <Input type="text" v-model="data.password" placeholder="新密码">
+                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                        </Input>
+                    </FormItem>
+                    <FormItem prop="Againpassword" label="再次输入">
+                        <Input type="text" v-model="data.Againpassword" placeholder="新密码">
+                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                        </Input>
+                    </FormItem>
+                    <FormItem style="text-align:right">
+                        <!-- <router-link to="/companyInfo"> -->
+                        <Button type="primary" @click="handleSubmit('formInline')">更新</Button>
+                        <!-- </router-link> -->
+                        
+                    </FormItem>
+                </Form>
+            </div>
+        </TabPane>
+        <TabPane label="更改手机">
+        </TabPane>
+    </Tabs>
+</template>
+<script>
+import { resetUserInfo } from '@/api/user.js'
+import { sendVerificationCode,checkVerificationCode } from '@/api/user.js'
+import { mapGetters } from 'vuex'
+export default {
+        data() {
+            const validatePassCheck = (rule, value, callback) => {
+                if (value == '' || value == ' ') {
+                    callback(new Error('请输入密码'));
+                    
+                } else if(value.length<6){
+                    callback(new Error('密码长度不能小于6!'));
+                    
+                }
+                  else {
+                    callback();
+                    
+                }
+                callback();
+            };
+            const validatePassCheckAG = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入密码'));
+                    
+                } else if (value !== this.data.password) {
+                    callback(new Error('密码不一致!'));
+                    
+                } else {
+                    callback();
+                    
+                }
+            };
+            const validateAuth = (rule, value, callback) => {
+
+                checkVerificationCode({mobile:this.data.mobile,verificationCode:value,type:'resetPassWord'}).then(res => {
+                    if(res.status == '200'){
+                        
+                        callback();
+                        
+                    }else{
+                        
+                        callback(new Error('验证码出错!'));
+                    }
+                })
+                
+
+            };
+            return {
+                sendingAuth:false,
+                mis:5,
+                currentToken:'',
+                data:{},
+            ruleInline: {
+                    verificationCode: [
+                        { validator: validateAuth, trigger: 'input' }
+                    ],
+                    "password": [
+                        { validator: validatePassCheck, trigger: 'blur' }
+                    ],
+                    "Againpassword": [
+                         { validator: validatePassCheckAG, trigger: 'blur' }
+                    ]
+                },
+            }
+        },
+        created() {
+            this.data.mobile = this.userInfo.mobile
+        },
+        computed: {
+            ...mapGetters(['userInfo'])
+        },
+        methods: {
+            async handleSubmit(name) {
+                this.$refs[name].validate(async (valid) => {
+                    if (valid) {
+
+                        console.log(this.data.password)
+                        let msg = (await resetUserInfo({password:this.data.password})).status
+
+                            if(msg == 200){
+                                this.$Message.success('密码修改成功!');
+                            }else{
+                                this.$Message.error('密码修改失败!');
+                            }
+                        
+                        
+                    } else {
+
+                        this.$Message.error('请补充信息!');
+                        
+                    }
+                })
+            },
+            sendVerificationCode(data){
+                sendVerificationCode(data).then(res => {
+                    if(res.status == '200'){
+                        this.sendingAuth = true
+                        this.currentToken = res.data
+                        let timer = setInterval(()=>{
+                            this.mis --
+                            if(this.mis == 0){
+                                clearInterval(timer)
+                                this.mis = 5
+                                this.sendingAuth = false
+                            }
+                        },1000)
+                        
+                    }else{
+                        this.sendingAuth = false
+                    }
+                })
+            }
+        },
+}
+</script>
+<style lang="scss" scoped>
+    .main{
+        margin: 0 auto;
+        width:500px;
+    }
+</style>

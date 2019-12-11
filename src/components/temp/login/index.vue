@@ -4,6 +4,7 @@
         <h1>系统标题</h1>
     </div>
     <div class='login'>
+        <p>登录</p>
         <Form ref="formInline" :model="formInline" :rules="ruleInline">
             <FormItem prop="user" >
                 <Input type="text" v-model="formInline.user" placeholder="登录名">
@@ -11,12 +12,12 @@
                 </Input>
             </FormItem>
             <FormItem prop="password" >
-                <Input type="password" v-model="formInline.password" @on-enter="handleSubmit('formInline')" placeholder="Password">
+                <Input type="password" v-model="formInline.password" @on-enter="handleSubmit('formInline')" placeholder="密码">
                     <Icon type="ios-lock-outline" slot="prepend"></Icon>
                 </Input>
             </FormItem>
             <FormItem style="text-align:right">
-                <Button type="primary" @click="handleSubmit('formInline')">登录</Button>
+                <Button type="primary" shape="circle" long @click="handleSubmit('formInline')">登录</Button>
             </FormItem>
         </Form>
         <div class="caculate">
@@ -98,9 +99,19 @@ import { mapActions, mapGetters, mapMutations } from 'vuex';
     .login{
         border-radius: 4px;
         background-color:#fff;
-        padding: 50px 20px 30px 20px;
-        width:333px;
+        padding: 10px 20px 30px 20px;
+        width:400px;
         margin: 60px auto 0 auto;
+        &:hover{
+            box-shadow:0 0 10px 1px #eee;
+        }
+        >p{
+            font-size:22px;
+            line-height:100px;
+            font-weight:700;
+            color:#2d8cf0;
+            opacity:.6;
+        }
         >div.caculate{
             >ul{
                     display: flex;

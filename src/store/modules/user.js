@@ -21,11 +21,12 @@ const state = {
             }
         },
     token:getToken(),
-    tempToken:''
+    tempToken:localStorages.get('tempToken') ? localStorages.get('tempToken') : ''
 }
 
 const mutations = {
     SET_TEMP_TOKEN(state,value){
+        localStorages.set('tempToken',value,1000*60*10)
         state.tempToken = value
     },
     SET_REGISTER(state,op){

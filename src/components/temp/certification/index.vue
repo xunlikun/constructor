@@ -1,9 +1,10 @@
 <template>
 <div class="login_main">
     <div class='title'>
-        <h1>实名认证</h1>
+        <h1>系统标题</h1>
     </div>
     <div class='login'>
+        <p>认证信息</p>
         <Form ref="formInline" :model="formInline" :rules="ruleInline">
             <div class='upload_wrap'>
                 <Upload des='企业营业执照' @changeUrl='changeUrl' name='companyPic' :currentImage='formInline.companyPic'></Upload>
@@ -170,9 +171,19 @@ import { localStorages } from '@/utils/cache.js'
     .login{
         border-radius: 4px;
         background-color:#fff;
-        padding: 50px 20px 30px 20px;
-        width:333px;
+        padding: 10px 20px 30px 20px;
+        width:400px;
         margin: 60px auto 0 auto;
+        &:hover{
+            box-shadow:0 0 10px 1px #eee;
+        }
+        >p{
+            font-size:22px;
+            line-height:100px;
+            font-weight:700;
+            color:#2d8cf0;
+            opacity:.6;
+        }
         >div.caculate{
             >ul{
                     display: flex;

@@ -25,7 +25,11 @@ service.interceptors.request.use(
         config.headers['authorization'] = store.getters.tempToken
         store.commit('SET_TEMP_TOKEN','')
       }
+    }else if(store.getters.tempToken){
+        config.headers['authorization'] = store.getters.tempToken
+        store.commit('SET_TEMP_TOKEN','')
     }
+    ;
     if(config.headers.json == true){
       config.headers['Content-Type'] = 'application/json'
       return config
@@ -86,11 +90,11 @@ service.interceptors.response.use(
     //}
   },
   error => {
-    if(/401/.test(error)){
+    // if(/401/.test(error)){
 
-      store.commit('DELETE_TOKEN')
+    //   store.commit('DELETE_TOKEN')
 
-    }
+    // }
     if(/(504|500)/.test(error)){
 
       ViewUI.Message.error('系统开小差去了！')

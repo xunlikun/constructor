@@ -1,17 +1,18 @@
 <template>
 <div>
     <Row style="height:120px;overflow:hidden">
-                <Col span="14" style="height:100%;position:relative">
+                <Col span="17" style="height:100%;position:relative">
                     <img :src="url" alt="" v-if="url" width="100%" height="120px" style="display:block"><span style="opacity:0">1</span>
                     <div class="bg" v-if="show">
                         {{des}}
                     </div>
                 </Col>
-                <Col span="10">
+                <Col span="7">
                     <Upload 
                     :show-upload-list='false'
                     name='imageFile' 
                     action="/api/constructor/user/sendToOss"
+                    :style='{float:"right"}'
                     :on-success='handleSuccess'>
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
@@ -50,7 +51,7 @@
 </script>
 <style lang="scss" scoped>
     .bg{
-        width: 170px;
+        width: 100%;
         height: 100%;
         background:#fff;
         border:1px solid #dcdee2;

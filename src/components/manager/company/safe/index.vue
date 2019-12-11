@@ -50,6 +50,16 @@
                             <Icon type="ios-lock-outline" slot="prepend"></Icon>
                         </Input>
                     </FormItem>
+                    <Row>
+                        <Col span="12">
+                            <FormItem prop="NewVerificationCode">
+                                <Input type="text" v-model="dataMobile.NewVerificationCode" placeholder="新手机验证码">
+                                    <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                                </Input>
+                            </FormItem>
+                        </Col>
+                        <Col span="12" style='padding-left:25px'><Button type="primary" :disabled='sendingAuthNew' @click=" !sendingAuthNew && sendVerificationCodeNew({mobile:dataMobile.newMobile})">{{sendingAuthNew ? misNew :'获取验证码'}}</Button></Col>
+                    </Row>
                     <FormItem style="text-align:right">
                         <!-- <router-link to="/companyInfo"> -->
                         <Button type="primary" @click="handleSubmit('formInlineMobile')">更新</Button>
@@ -123,9 +133,26 @@ export default {
                 
 
             };
+            const validateAuthNewMobile = (rule, value, callback) => {
+
+                checkVerificationCode({mobile:this.dataMobile.newMobile,verificationCode:value}).then(res => {
+                    if(res.status == '200'){
+                        this.SET_TEMP_TOKEN(res.data)
+                        callback();
+                        
+                    }else{
+                        
+                        callback(new Error('验证码出错!'));
+                    }
+                })
+                
+
+            };
             return {
                 sendingAuth:false,
+                sendingAuthNew:false,
                 mis:5,
+                misNew:5,
                 data:{},
                 dataMobile:{},
 
@@ -143,6 +170,9 @@ export default {
             ruleInlineMobile:{
                 verificationCode: [
                         { validator: validateAuthMobile, trigger: 'input' }
+                    ],
+                NewVerificationCode: [
+                        { validator: validateAuthNewMobile, trigger: 'input' }
                     ]
             }
             }
@@ -202,6 +232,24 @@ export default {
                         
                     }else{
                         this.sendingAuth = false
+                    }
+                })
+            },
+            sendVerificationCodeNew(data){
+                sendVerificationCode(data).then(res => {
+                    if(res.status == '200'){
+                        this.sendingAuthNew = true
+                        let timer = setInterval(()=>{
+                            this.misNew --
+                            if(this.misNew == 0){
+                                clearInterval(timer)
+                                this.misNew = 5
+                                this.sendingAuthNew = false
+                            }
+                        },1000)
+                        
+                    }else{
+                        this.sendingAuthNew = false
                     }
                 })
             }

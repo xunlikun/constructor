@@ -29,7 +29,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang='scss'>
 body{
     background-color: #f8f8f9;
 }

@@ -47,7 +47,7 @@
                     </Row>
                     <FormItem prop="newMobile" label="新手机号">
                         <Input type="text" v-model="dataMobile.newMobile" placeholder="新手机号">
-                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                            <Icon type="ios-phone-portrait" slot="prepend"/>
                         </Input>
                     </FormItem>
                     <Row>

@@ -10,6 +10,7 @@
                 <Upload des='企业营业执照' @changeUrl='changeUrl' name='companyPic' :currentImage='formInline.companyPic'></Upload>
             </div>
             <div class='upload_wrap' style="text-align:left">
+                <p style="font-size:16px;margin-bottom:6px">注册用户角色：</p>
                 <Select v-model="formInline.role" >
                     <Option v-for="item in roles" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>

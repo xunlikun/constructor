@@ -2,49 +2,52 @@
 <div>
     <div class='filter'>
         <Form ref="op" :model="op" :rules="ruleCustom" :label-width="80" inline>
-        <FormItem label="合同编号" prop="contractCode">
-            <Input size="small" type="text" v-model="op.contractCode"></Input>
-        </FormItem>
-        <FormItem label="合同标题" prop="contractTitle">
-            <Input size="small" type="text" v-model="op.contractTitle"></Input>
-        </FormItem>
-        <FormItem label="对方" prop="partyB">
-            <Input size="small" type="text" v-model="op.partyB"></Input>
-        </FormItem>
-         <FormItem label="状态">
-            <Select v-model="op.isSigned">
-                <Option value="1">已签订</Option>
-                <Option value="0">待签订</Option>
-            </Select>
-        </FormItem>
-        <FormItem label="创建日期">
-            <Row>
-                <Col span="11">
-                    <DatePicker type="date" placeholder="开始日期" @on-change='(format)=>{op.createDateMin = format.replace(/-/ig,"/")}'></DatePicker>
-                </Col>
-                <Col span="2" style="text-align: center">-</Col>
-                <Col span="11">
-                    <DatePicker type="date" placeholder="结束日期" @on-change='(format)=>{op.createDateMax = format.replace(/-/ig,"/")}'></DatePicker>
-                </Col>
-            </Row>
-        </FormItem>
-        <FormItem label="签署日期">
-            <Row>
-                <Col span="11">
-                    <DatePicker type="date" placeholder="开始日期" @on-change='(format)=>{op.signedTimeMin = format.replace(/-/ig,"/")}'></DatePicker>
-                </Col>
-                <Col span="2" style="text-align: center">-</Col>
-                <Col span="11">
-                    <DatePicker type="date" placeholder="结束日期" @on-change='(format)=>{op.signedTimeMax = format.replace(/-/ig,"/")}'></DatePicker>
-                </Col>
-            </Row>
-        </FormItem>
-        <FormItem>
-            <Button type="primary" @click="handleSubmit('op')">检索</Button>
-        </FormItem>
-    </Form>
+            <FormItem label="合同编号" prop="contractCode">
+                <Input size="small" type="text" v-model="op.contractCode"></Input>
+            </FormItem>
+            <FormItem label="合同标题" prop="contractTitle">
+                <Input size="small" type="text" v-model="op.contractTitle"></Input>
+            </FormItem>
+            <FormItem label="对方" prop="partyB">
+                <Input size="small" type="text" v-model="op.partyB"></Input>
+            </FormItem>
+            <FormItem label="状态">
+                <Select v-model="op.isSigned">
+                    <Option value="1">已签订</Option>
+                    <Option value="0">待签订</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="创建日期">
+                <Row>
+                    <Col span="11">
+                        <DatePicker type="date" placeholder="开始日期" @on-change='(format)=>{op.createDateMin = format.replace(/-/ig,"/")}'></DatePicker>
+                    </Col>
+                    <Col span="2" style="text-align: center">-</Col>
+                    <Col span="11">
+                        <DatePicker type="date" placeholder="结束日期" @on-change='(format)=>{op.createDateMax = format.replace(/-/ig,"/")}'></DatePicker>
+                    </Col>
+                </Row>
+            </FormItem>
+            <FormItem label="签署日期">
+                <Row>
+                    <Col span="11">
+                        <DatePicker type="date" placeholder="开始日期" @on-change='(format)=>{op.signedTimeMin = format.replace(/-/ig,"/")}'></DatePicker>
+                    </Col>
+                    <Col span="2" style="text-align: center">-</Col>
+                    <Col span="11">
+                        <DatePicker type="date" placeholder="结束日期" @on-change='(format)=>{op.signedTimeMax = format.replace(/-/ig,"/")}'></DatePicker>
+                    </Col>
+                </Row>
+            </FormItem>
+            <FormItem>
+                <Button type="primary" @click="handleSubmit('op')">检索</Button>
+            </FormItem>
+        </Form>
     </div>
-    <Table :data="contractData" :columns="tableColumns" :style='{minHeight:"500px"}' stripe></Table>
+    <div class='multiple_asing'>
+        <Button type="success" @click='confirm'>批量签约</Button>
+    </div>
+    <Table @on-selection-change='selection' :data="contractData" :columns="tableColumns" :style='{minHeight:"500px"}' stripe></Table>
     <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
             <Page :total="total" :current="current" @on-change="changePage"></Page>
@@ -104,7 +107,13 @@ export default {
             total:100,
             current:1,
             contractData:[],
+            currentSelections:[],
                 tableColumns: [
+                    {
+                        type: 'selection',
+                        width: 60,
+                        align: 'center'
+                    },
                     {
                         title: '合同编号',
                         key: 'contractCode',
@@ -221,10 +230,30 @@ export default {
                         this.$Message.error('失败!');
                     }
                 })
+        },
+        selection(selections){
+            this.currentSelections = selections
+        },
+        confirm () {
+                this.$Modal.confirm({
+                    title: '签约',
+                    content: '<p>您将要执行批量签订？</p>',
+                    onOk: () => {
+                        if(this.currentSelections.length == 0){
+                            return this.$Message.warning('请先选择！');
+                        }
+                        this.$Message.info('Clicked ok');
+                    },
+                    onCancel: () => {
+                        // this.$Message.info('Clicked cancel');
+                    }
+                });
             }
     },
 }
 </script>
 <style scoped>
-    
+    .multiple_asing{
+        padding: 0 0 10px 10px;
+    }
 </style>

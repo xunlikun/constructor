@@ -1,7 +1,10 @@
 <template>
-    <div v-if="data">
+    <div class='main' :class='{main_bg:$route.query.calculate == "search"}' v-if="data">
         <template v-if='$route.query.calculate == "search"'>
             <List>
+                <header>
+                    <h1 style="line-height:50px;text-align:center;color:#2d8cf0;opacity:.6;">人员详情</h1>
+                </header>
                 <ListItem>
                     <ListItemMeta avatar="https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar" title="姓名" :description="data.name" />
                 </ListItem>
@@ -26,7 +29,7 @@
                     </FormItem>
                     <FormItem prop="idNumber" label="身份证号">
                         <Input type="text" v-model="data.idNumber" placeholder="身份证号">
-                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                            <Icon type="md-card" slot="prepend"/>
                         </Input>
                     </FormItem>
                     <FormItem prop="position" label="职务">
@@ -37,7 +40,7 @@
                     </FormItem>
                     <FormItem prop="mobile" label="手机号码">
                         <Input type="tel" v-model="data.mobile" placeholder="手机号码">
-                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                            <Icon type="ios-phone-portrait" slot="prepend"/>
                         </Input>
                     </FormItem>
                     <FormItem style="text-align:right">
@@ -126,5 +129,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-    
+    .main{
+        width: 500px;
+        margin: 0 auto; 
+    }
+    .main_bg{
+        box-shadow: 0 0 10px 1px #eee;
+    }
 </style>

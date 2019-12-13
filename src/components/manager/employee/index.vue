@@ -1,10 +1,10 @@
 <template>
     <div>
-        <Row :style='{paddingBottom:"50px"}'>
-            <Col offset="23">
-            <Button type="primary" @click='changeModal_employee_add'>
-                新增
-            </Button>
+        <Row :style='{paddingBottom:"20px"}'>
+            <Col span="24" :style='{textAlign:"right"}'>
+                <Button type="primary" @click='changeModal_employee_add'>
+                    新增
+                </Button>
             </Col>
         </Row>
         <Table :data="employeeData" :columns="tableColumns" stripe :style='{minHeight:"500px"}'></Table>
@@ -27,7 +27,7 @@
                     </FormItem>
                     <FormItem prop="idNumber" label="身份证号">
                         <Input type="text" v-model="data.idNumber" placeholder="身份证号">
-                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                            <Icon type="md-card" slot="prepend"/>
                         </Input>
                     </FormItem>
                     <FormItem prop="position" label="职务">
@@ -38,7 +38,7 @@
                     </FormItem>
                     <FormItem prop="mobile" label="手机号码">
                         <Input type="tel" v-model="data.mobile" placeholder="手机号码">
-                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                            <Icon type="ios-phone-portrait" slot="prepend"/>
                         </Input>
                     </FormItem>
                 </Form>

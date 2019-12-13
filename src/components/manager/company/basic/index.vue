@@ -1,14 +1,16 @@
 <template>
+<Tabs size="small">
+    <TabPane label="基本信息">
     <div class='main' v-if = 'data'>
         <Form ref="formInline" :model="data" :rules="ruleInline">
                     <FormItem prop="entityName" label="企业全称 (不可修改)">
                         <Input type="text" v-model="data.entityName" placeholder="企业全称">
-                            <Icon type="ios-person-outline" slot="prepend"></Icon>
+                            <Icon type="ios-contacts-outline" slot="prepend"/>
                         </Input>
                     </FormItem>
                     <FormItem prop="businessLicenseNumber(营业执照编号)" label="营业执照编号 (不可修改)">
                         <Input type="text" v-model="data['businessLicenseNumber(营业执照编号)']" placeholder="营业执照编号">
-                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                            <Icon type="ios-card-outline" slot="prepend"/>
                         </Input>
                     </FormItem>
                     <div>
@@ -17,21 +19,23 @@
                     </div>
                     <FormItem prop="legalPersonName(法人姓名)" label="法人姓名">
                         <Input type="text" v-model="data['legalPersonName(法人姓名)']" placeholder="法人姓名">
-                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                            <Icon type="ios-contact-outline" slot="prepend"/>
                         </Input>
                     </FormItem>
                     <FormItem prop="corporateIdNumber(法人身份证号)" label="法人身份证号">
                         <Input type="text" v-model="data['corporateIdNumber(法人身份证号)']" placeholder="法人身份证号">
-                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                            <Icon type="md-card" slot="prepend"/>
                         </Input>
                     </FormItem>
                     <FormItem prop="companyBankAccount(企业银行账号)" label="企业银行账号">
                         <Input type="text" v-model="data['companyBankAccount(企业银行账号)']" placeholder="企业银行账号">
-                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                            <Icon type="ios-card" slot="prepend"/>
                         </Input>
                     </FormItem>
                 </Form>
-    </div>
+            </div>
+        </TabPane>
+    </Tabs>
 </template>
 <script>
 import track from '@/utils/track.js'

@@ -165,6 +165,7 @@ export default {
             if(this.userInfo.userStatus == 0){
                 this.getCompanyInfo()
             }else{
+                this.getCompanyInfo()
                 let query = JSON.parse(JSON.stringify(this.op))
                 for (const key in query) {
                     if(query[key]){

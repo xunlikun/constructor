@@ -38,7 +38,7 @@
         <Layout>
             <Header :style="{position: 'fixed', width: '100%',top:'0',zIndex:'1000'}">
                 <Menu mode="horizontal" theme="dark" :active-name="currentMenuItemNum" @on-select='loading'>
-                    <div class="layout-logo"></div>
+                    <!-- <div class="layout-logo"></div> -->
                     <div class="layout-nav">
                         <MenuItem class='layout-nav-item' name="1" to='/manager/project' v-if="userInfo.userStatus == 1">
                             <Icon type="ios-navigate"></Icon>

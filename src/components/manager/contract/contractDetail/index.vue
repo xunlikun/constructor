@@ -19,8 +19,9 @@
     <div class='pdf_view'>
         <Row>
             <Col span="24" style='text-align:center;margin-top:50px;'>
-                <div style='position:relative;display:inline-block;width=55.5%;border:1px solid #ccc'>
-                    <img :src='currentContract' width='100%'/>
+                <div style='position:relative;display:inline-block;width:55.5%;border:1px solid #ccc'>
+                    <!-- <img :src='currentContract' width='100%'/> -->
+                        <pdf :src="currentContract" :style="{width:'100%'}"></pdf>
                         <Row style='position:absolute;top:-32px;right:0'>
                             <Col span="12">
                                 <Button type="primary">
@@ -41,8 +42,10 @@
 </template>
 <script>
 import track from '@/utils/track.js'
+import pdf from 'vue-pdf'
 import { getContractDetail,getNextContract,getPreviousContract } from '@/api/contract.js'
 export default {
+    components:{pdf},
     data() {
         return {
             pre:{},
@@ -68,6 +71,7 @@ export default {
 
             let data = (await getContractDetail(query)).data
                 this.currentContract = data.contractPath
+                this.currentContract = 'https://sourcinboxweb.oss-cn-shanghai.aliyuncs.com/constract/Signed_Person.pdf'
                 this.currentContractTime = data.createDate
         },
         @track.loading

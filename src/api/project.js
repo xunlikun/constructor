@@ -14,3 +14,10 @@ export function getProjectDetail(data){
         data
     })
 }
+export function saveProjectDetail(data){
+    return request({
+        url:'/api/constructor/project/save',
+        method:'post',
+        data
+    })
+}

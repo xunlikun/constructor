@@ -45,6 +45,7 @@
                 </FormItem>
                 <FormItem>
                     <Button type="primary" @click="handleSubmit('op')">检索</Button>
+                    <Button type="primary" @click='changeModal_employee_add'>新增</Button>
                 </FormItem>
             </Form>
             </div>
@@ -55,12 +56,33 @@
                 </div>
             </div>
         </template>
+        <Modal
+            title="新增"
+            v-model="modal_employee_add"
+            class-name="vertical-center-modal"
+            @on-ok="handleSubmitNew('formInline')"
+            ok-text="新增">
+            <Form ref="formInline" :model="formInline" :rules="ruleInline">
+                    <FormItem prop="name" label="姓名">
+                        <Input type="text" v-model="formInline.name" placeholder="姓名">
+                            <Icon type="ios-person-outline" slot="prepend"></Icon>
+                        </Input>
+                    </FormItem>
+                    <FormItem prop="position" label="职务">
+                        <Select v-model="formInline.position">
+                            <Option value="projectManager">项目经理</Option>
+                            <Option value="projectAccountant">项目财务</Option>
+                        </Select>
+                    </FormItem>
+                </Form>
+        </Modal>
     </div>
 </template>
 <script>
 import track from '@/utils/track.js'
 import Temp from '@/components/temp/waitingPeriod'
 import { mapGetters, mapActions } from 'vuex'
+import { saveProjectDetail } from '@/api/project.js'
 export default {
     components:{Temp},
     data() {
@@ -72,6 +94,7 @@ export default {
                 // }
             };
         return {
+            modal_employee_add:false,
             op:{
                 projectCode:'',
                 projectName:'',
@@ -108,6 +131,17 @@ export default {
                         { validator: validateText}
                     ]
                 },
+            formInline:{
+
+            },
+            ruleInline:{
+                contractCode: [
+                        { validator: validateText}
+                    ],
+                contractTitle: [
+                        { validator: validateText}
+                    ],
+            },
             total:100,
             current:1,
             projectData:[],
@@ -160,6 +194,33 @@ export default {
     },
     methods: {
         ...mapActions(['getCompanyInfo','getProjectList']),
+        @track.loading
+        changeModal_employee_add(){
+            this.modal_employee_add = true
+        },
+        @track.loading
+        async saveProjectDetail(){
+            let status = (await saveProjectDetail(this.formInline)).status
+                        if(status == 200){
+                           this.$Message.success('成功!'); 
+                           this.init()
+                        }else{
+                            this.$Message.error('服务器开小差去啦!');
+                        }
+        },
+        async handleSubmitNew(name) {
+                this.$refs[name].validate(async (valid) => {
+                    if (valid) {
+
+                        
+                        await this.saveProjectDetail()
+                        
+                    } else {
+
+                        this.$Message.error('请补充信息!');
+                    }
+                })
+            },
         @track.loading
         async init(){
             if(this.userInfo.userStatus == 0){

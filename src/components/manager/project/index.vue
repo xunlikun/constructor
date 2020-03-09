@@ -63,16 +63,52 @@
             @on-ok="handleSubmitNew('formInline')"
             ok-text="新增">
             <Form ref="formInline" :model="formInline" :rules="ruleInline">
-                    <FormItem prop="name" label="姓名">
-                        <Input type="text" v-model="formInline.name" placeholder="姓名">
+                    <FormItem prop="projectCode" label="工程编号">
+                        <Input type="text" v-model="formInline.projectCode" placeholder="工程编号">
                             <Icon type="ios-person-outline" slot="prepend"></Icon>
                         </Input>
                     </FormItem>
-                    <FormItem prop="position" label="职务">
-                        <Select v-model="formInline.position">
-                            <Option value="projectManager">项目经理</Option>
-                            <Option value="projectAccountant">项目财务</Option>
+                    <FormItem prop="projectName" label="工程名称">
+                        <Input type="text" v-model="formInline.projectName" placeholder="工程名称">
+                            <Icon type="ios-person-outline" slot="prepend"></Icon>
+                        </Input>
+                    </FormItem>
+                    <FormItem prop="bankAccount" label="银行账户">
+                        <Input type="text" v-model="formInline.bankAccount" placeholder="银行账户">
+                            <Icon type="ios-person-outline" slot="prepend"></Icon>
+                        </Input>
+                    </FormItem>
+                    <FormItem prop="projectStatus" label="工程状态">
+                        <Select v-model="formInline.projectStatus">
+                            <Option value="0">在建</Option>
+                            <Option value="1">完工</Option>
                         </Select>
+                    </FormItem>
+                    <FormItem prop="projectManagerCode" label="项目经理">
+                         <Select
+                            v-model="formInline.projectManagerCode"
+                            filterable
+                            remote
+                            :remote-method="remoteMethod1"
+                            :loading="loading1">
+                            <Option v-for="(option, index) in options1" :value="option.id" :key="index">{{option.userName}}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem prop="projectAccountantCode" label="项目财务">
+                         <Select
+                            v-model="formInline.projectAccountantCode"
+                            filterable
+                            remote
+                            :remote-method="remoteMethod1"
+                            :loading="loading1">
+                            <Option v-for="(option, index) in options1" :value="option.id" :key="index">{{option.userName}}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem prop="startTime" label="开工日期">
+                        <DatePicker type="datetime" placeholder="Select date and time" @on-change='(format)=>{formInline.startTime = format}' style="width: 200px"></DatePicker>
+                    </FormItem>
+                    <FormItem prop="finishTime" label="完工日期">
+                        <DatePicker type="datetime" placeholder="Select date and time" @on-change='(format)=>{formInline.finishTime = format}' style="width: 200px"></DatePicker>
                     </FormItem>
                 </Form>
         </Modal>
@@ -82,18 +118,20 @@
 import track from '@/utils/track.js'
 import Temp from '@/components/temp/waitingPeriod'
 import { mapGetters, mapActions } from 'vuex'
-import { saveProjectDetail } from '@/api/project.js'
+import { saveProjectDetail,getEmployeeInfo } from '@/api/project.js'
 export default {
     components:{Temp},
     data() {
         const validateText = (rule, value, callback) => {
-                // if (value === '') {
-                //     callback(new Error('请输入！'));
-                // } else {
+                if (value == '' && !value) {
+                    callback(new Error('请输入！'));
+                } else {
                     callback();
-                // }
+                }
             };
         return {
+            loading1:false,
+            options1:[],
             modal_employee_add:false,
             op:{
                 projectCode:'',
@@ -135,12 +173,24 @@ export default {
 
             },
             ruleInline:{
-                contractCode: [
-                        { validator: validateText}
-                    ],
-                contractTitle: [
-                        { validator: validateText}
-                    ],
+                projectCode: [
+                    { validator: validateText}
+                ],
+                projectName: [
+                    { validator: validateText}
+                ],
+                bankAccount: [
+                    { validator: validateText}
+                ],
+                projectStatus: [
+                    { validator: validateText}
+                ],
+                projectManagerCode: [
+                    { validator: validateText}
+                ],
+                projectAccountantCode: [
+                    { validator: validateText}
+                ]
             },
             total:100,
             current:1,
@@ -194,6 +244,18 @@ export default {
     },
     methods: {
         ...mapActions(['getCompanyInfo','getProjectList']),
+        log(formart){
+            console.log(formart)
+        },
+        remoteMethod1(query){
+                    this.loading1 = true;
+                    getEmployeeInfo().then(res => {
+                       
+                       this.options1 = res.data
+                       this.loading1 = false
+                    })
+                    
+        },
         @track.loading
         changeModal_employee_add(){
             this.modal_employee_add = true
@@ -258,6 +320,27 @@ export default {
                         this.$Message.error('失败!');
                     }
                 })
+        }
+    },
+    watch: {
+        formInline:{
+            deep:true,
+            handler(){
+                if(this.formInline.projectManagerCode){
+                    this.formInline.projectManager = this.options1.filter((item,index,ary) =>{
+                    return item.id == this.formInline.projectManagerCode
+                    })[0].userName
+                }
+                
+                if(this.formInline.projectAccountantCode){
+                    this.formInline.projectAccountant = this.options1.filter((item,index,ary) =>{
+                    return item.id == this.formInline.projectAccountantCode
+                    })[0].userName
+                }
+                
+
+                console.log(this.formInline)
+            }
         }
     },
 }

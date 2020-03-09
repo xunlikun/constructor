@@ -2,6 +2,12 @@
 <div>
     <div class='filter'>
         <Form ref="op" :model="op" :rules="ruleCustom" :label-width="80" inline>
+            <FormItem label="合同类型" prop="contractType">
+                <Select v-model="op.contractType">
+                    <Option value="constructor">框架合同</Option>
+                    <Option value="project">租赁合同</Option>
+                </Select>
+            </FormItem>
             <FormItem label="合同编号" prop="contractCode">
                 <Input size="small" type="text" v-model="op.contractCode"></Input>
             </FormItem>
@@ -53,21 +59,47 @@
             <Page :total="total" :current="current" @on-change="changePage"></Page>
         </div>
     </div>
+    <Modal
+        v-model="modal1"
+        title="验证您的信息"
+        @on-ok='sign'
+        >
+        <Form ref="formInline" :model="formInline">
+            <Row>
+                <Col span="12">
+                    <FormItem prop="verificationCode" >
+                        <Input type="text" v-model="formInline.verificationCode" placeholder="验证码">
+                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                        </Input>
+                    </FormItem>
+                </Col>
+                <Col span="12"><Button :style='{float:"right"}' type="primary" :disabled='sendingAuth' @click=" !sendingAuth && sendSignMobileCode()">{{sendingAuth ? mis :'获取验证码'}}</Button></Col>
+            </Row>
+        </Form>
+    </Modal>
 </div>
 </template>
 <script>
+        // @on-ok="ok"
+        // @on-cancel="cancel"
 import track from '@/utils/track.js'
 import { mapActions } from 'vuex'
+import { sign } from '@/api/contract.js'
+import { sendSignMobileCode } from '@/api/user.js'
 export default {
     data() {
         const validateText = (rule, value, callback) => {
-                // if (value === '') {
+                // if (value == '' || !value) {
                 //     callback(new Error('请输入！'));
                 // } else {
                     callback();
                 // }
             };
         return {
+            modal1:false,
+            formInline:{},
+            sendingAuth:false,
+            mis:5,
             op: {
                     contractCode:'',
                     contractTitle:'',
@@ -159,7 +191,8 @@ export default {
                         title: '操作',
                         key: 'calculate',
                         render: (h, params) => {
-                            return h('div', [
+                            if(params.row.contractType == 'constructor' && !params.row.isSigned){
+                                return h('div', [
                                 h('Button', {
                                     props: {
                                         type: 'primary',
@@ -170,7 +203,7 @@ export default {
                                     },
                                     on: {
                                         click: () => {
-                                            // this.show(params.index)
+                                            this.down(params.row.contractPath)
                                         }
                                     }
                                 }, '下载'),
@@ -181,11 +214,30 @@ export default {
                                     },
                                     on: {
                                         click: () => {
-                                            // this.remove(params.index)
+                                            this.checkSign(params.row)
                                         }
                                     }
                                 }, '签约')
                             ]);
+                            }else{
+                                return h('div', [
+                                    h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            size: 'small'
+                                        },
+                                        style: {
+                                            marginRight: '5px'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                this.down(params.row.contractPath)
+                                            }
+                                        }
+                                    }, '下载')
+                                ]);
+                            }
+                            
                         }
  
                     }
@@ -196,7 +248,43 @@ export default {
         this.init()
     },
     methods: {
-        ...mapActions(['getContractList']),
+        ...mapActions(['getContractList','down']),
+        sendSignMobileCode(data){
+                sendSignMobileCode().then(res => {
+                    if(res.status == '200'){
+                        this.sendingAuth = true
+                        let timer = setInterval(()=>{
+                            this.mis --
+                            if(this.mis == 0){
+                                clearInterval(timer)
+                                this.mis = 5
+                                this.sendingAuth = false
+                            }
+                        },1000)
+                        
+                    }else{
+                        this.sendingAuth = false
+                        this.$Message.error('错误!');
+                    }
+                })
+        },
+        checkSign(op){
+            this.modal1 = true
+            this.currentSelections.push(op)
+        },
+        @track.loading
+        sign(){
+            let signListCode = []
+            for(let op of this.currentSelections){
+                signListCode.push(op.id)
+            }
+            console.log(signListCode)
+            sign({verificationCode:this.formInline.verificationCode,ids:signListCode}).then( res => {
+                console.log(res)
+                this.currentSelections = []
+                this.init()
+            } )
+        },
         @track.loading
         async init(){
             let query = JSON.parse(JSON.stringify(this.op))
@@ -232,7 +320,9 @@ export default {
                 })
         },
         selection(selections){
-            this.currentSelections = selections
+            this.currentSelections = selections.filter((item,index,ary) => {
+                return item.contractType == 'constructor'
+            })
         },
         confirm () {
                 this.$Modal.confirm({
@@ -242,7 +332,7 @@ export default {
                         if(this.currentSelections.length == 0){
                             return this.$Message.warning('请先选择！');
                         }
-                        this.$Message.info('Clicked ok');
+                        this.modal1 = true
                     },
                     onCancel: () => {
                         // this.$Message.info('Clicked cancel');

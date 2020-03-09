@@ -29,6 +29,13 @@ export function sendVerificationCode(data){
         data
     })
 }
+export function sendSignMobileCode(data){
+    return request({
+        url:'/api/constructor/contract/sendSignMobileCode',
+        method:'post',
+        data
+    })
+}
 export function sendToOss(data){
     return request({
         url:'/api/constructor/user/sendToOss',

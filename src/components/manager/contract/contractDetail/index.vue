@@ -28,8 +28,8 @@
                                     下载
                                 </Button>
                             </Col>
-                            <Col span="12">
-                                <Button type="primary">
+                            <Col span="12" v-if='currentContractType == "constructor" && !isSigned'>
+                                <Button type="primary" @click='check'>
                                     签订
                                 </Button>
                             </Col>
@@ -38,12 +38,32 @@
            </Col>
         </Row>
     </div>
+    <Modal
+        v-model="modal1"
+        title="验证您的信息"
+        @on-ok='sign'
+        >
+        <Form ref="formInline" :model="formInline">
+            <Row>
+                <Col span="12">
+                    <FormItem prop="verificationCode" >
+                        <Input type="text" v-model="formInline.verificationCode" placeholder="验证码">
+                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+                        </Input>
+                    </FormItem>
+                </Col>
+                <Col span="12"><Button :style='{float:"right"}' type="primary" :disabled='sendingAuth' @click=" !sendingAuth && sendSignMobileCode()">{{sendingAuth ? mis :'获取验证码'}}</Button></Col>
+            </Row>
+        </Form>
+    </Modal>
 </div>
 </template>
 <script>
 import track from '@/utils/track.js'
 import pdf from 'vue-pdf'
 import { getContractDetail,getNextContract,getPreviousContract } from '@/api/contract.js'
+import { sendSignMobileCode } from '@/api/user.js'
+import { sign } from '@/api/contract.js'
 export default {
     components:{pdf},
     data() {
@@ -51,14 +71,53 @@ export default {
             pre:{},
             nex:{},
             currentContract:'',
-            currentContractTime:''
+            currentContractTime:'',
+            currentContractType:'',
+            modal1:false,
+            formInline:{},
+            sendingAuth:false,
+            mis:5,
+            currentId:'',
+            isSigned:false,
         }
     },
     created() {
         this.init()
     },
     methods: {
+        check(){
+            this.modal1 = true
+        },
         @track.loading
+        sign(){
+            let signListCode = []
+
+                signListCode.push(this.currentId)
+
+            sign({verificationCode:this.formInline.verificationCode,ids:signListCode}).then( res => {
+                console.log(res)
+                this.init()
+            } )
+        },
+        sendSignMobileCode(data){
+                sendSignMobileCode().then(res => {
+                    if(res.status == '200'){
+                        this.sendingAuth = true
+                        let timer = setInterval(()=>{
+                            this.mis --
+                            if(this.mis == 0){
+                                clearInterval(timer)
+                                this.mis = 5
+                                this.sendingAuth = false
+                            }
+                        },1000)
+                        
+                    }else{
+                        this.sendingAuth = false
+                        this.$Message.error('错误!');
+                    }
+                })
+        },
         async init(){
             let query = JSON.parse(JSON.stringify(this.$route.query))
             for (const key in query) {
@@ -71,8 +130,10 @@ export default {
 
             let data = (await getContractDetail(query)).data
                 this.currentContract = data.contractPath
-                this.currentContract = 'https://sourcinboxweb.oss-cn-shanghai.aliyuncs.com/constract/Signed_Person.pdf'
                 this.currentContractTime = data.createDate
+                this.currentContractType = data.contractType
+                this.currentId = data.id
+                this.isSigned = data.isSigned
         },
         @track.loading
         async preContract(){
@@ -89,6 +150,9 @@ export default {
             let data = (await getPreviousContract(query)).data
                 this.currentContract = data.contractPath
                 this.currentContractTime = data.createDate
+                this.currentContractType = data.contractType
+                this.currentId = data.id
+                this.isSigned = data.isSigned
         },
         @track.loading
         async nexContract(){
@@ -105,6 +169,9 @@ export default {
             let data = (await getNextContract(query)).data
                 this.currentContract = data.contractPath
                 this.currentContractTime = data.createDate
+                this.currentContractType = data.contractType
+                this.currentId = data.id
+                this.isSigned = data.isSigned
         }
     },
 } 

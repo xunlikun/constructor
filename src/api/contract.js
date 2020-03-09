@@ -28,3 +28,11 @@ export function getPreviousContract(data){
         data
     })
 }
+export function sign(data){
+    return request({
+        url:'/api/constructor/contract/signed',
+        method:'post',
+        data,
+        headers:{'json':true}
+    })
+}

@@ -18,6 +18,13 @@ export function saveProjectDetail(data){
     return request({
         url:'/api/constructor/project/save',
         method:'post',
-        data
+        data,
+        headers:{'json':true}
+    })
+}
+export function getEmployeeInfo(){
+    return request({
+        url:'/api/constructor/user/selectData',
+        method:'post'
     })
 }

@@ -48,7 +48,7 @@
 <script>
 import track from '@/utils/track.js'
 import { mapActions } from 'vuex'
-import {saveEmployeeDetail} from '@/api/employee.js'
+import { saveEmployeeDetail,removeEmployee } from '@/api/employee.js'
 export default {
     data() {
         const validateUserName = (rule, value, callback) => {
@@ -139,7 +139,9 @@ export default {
                                     },
                                     on: {
                                         click: () => {
-                                            // this.remove(params.index)
+
+                                            this.remove(params.row.id)
+
                                         }
                                     }
                                 }, '删除')
@@ -155,6 +157,15 @@ export default {
     },
     methods: {
         ...mapActions(['getEmployeeList']),
+        @track.loading
+        remove(id){
+            
+            removeEmployee({id:id}).then(res =>{
+                if(res.status == 200){
+                    this.init()
+                }
+            })
+        },
         @track.loading
         async init(){
             let query = JSON.parse(JSON.stringify(this.op))

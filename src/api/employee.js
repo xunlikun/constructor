@@ -21,3 +21,10 @@ export function saveEmployeeDetail(data){
         data
     })
 }
+export function removeEmployee(data){
+    return request({
+        url:'/api/constructor/employee/delete',
+        method:'post',
+        data
+    })
+}

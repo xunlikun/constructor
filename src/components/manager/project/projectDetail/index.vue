@@ -20,13 +20,13 @@
                 <ListItemMeta :avatar="require('@/assets/images/list/changyongicon-.png')" title="银行账号" :description="data.bankAccount" />
             </ListItem>
             <ListItem>
-                <ListItemMeta :avatar="require('@/assets/images/list/fazhuangtai.png')" title="状态" :description="data.status == 0 ? '在建':'完工'" />
+                <ListItemMeta :avatar="require('@/assets/images/list/fazhuangtai.png')" title="状态" :description="data.projectStatus == 0 ? '在建':'完工'" />
             </ListItem>
             <ListItem>
                 <ListItemMeta :avatar="require('@/assets/images/list/riqi.png')" title="创建日期" :description="data.createDate"/>
             </ListItem>
             <ListItem>
-                <ListItemMeta :avatar="require('@/assets/images/list/riqi.png')" title="完工日期" :description="data.status == 0 ? '未完工' : data.finishTime"/>
+                <ListItemMeta :avatar="require('@/assets/images/list/riqi.png')" title="完工日期" :description="data.projectStatus == 0 ? '未完工' : data.finishTime"/>
             </ListItem>
         </List>
     </div>

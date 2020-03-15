@@ -1,11 +1,16 @@
 <template>
 <div class="login_main">
     <div class='title'>
-        <h1>系统标题</h1>
+        <h1>极建</h1>
     </div>
     <div class='login'>
         <p>认证信息</p>
         <Form ref="formInline" :model="formInline" :rules="ruleInline">
+            <FormItem prop="mobile" >
+                <Input type="tel" v-model="formInline.mobile" placeholder="用于接收签署合同时接收验证码的手机号">
+                    <Icon type="ios-phone-portrait" slot="prepend"/>
+                </Input>
+            </FormItem>
             <div class='upload_wrap'>
                 <Upload des='企业营业执照' @changeUrl='changeUrl' name='companyPic' :currentImage='formInline.companyPic'></Upload>
             </div>
@@ -61,7 +66,8 @@ import { localStorages } from '@/utils/cache.js'
                     role:'法人',
                     idFront:'',
                     idSide:'',
-                   commonPic:''
+                   commonPic:'',
+                   mobile:''
                 },
                 ruleInline: {
                     companyPic:[
@@ -74,6 +80,9 @@ import { localStorages } from '@/utils/cache.js'
                         { validator: validateCompanyInfo, trigger: 'blur' }
                     ],
                     idSide:[
+                        { validator: validateCompanyInfo, trigger: 'blur' }
+                    ],
+                    mobile:[
                         { validator: validateCompanyInfo, trigger: 'blur' }
                     ]
                 },
@@ -138,18 +147,14 @@ import { localStorages } from '@/utils/cache.js'
                             {
                                 "attrCode":"authorization(加盖单位公章的授权书)",
                                 "attrValue":this.formInline.commonPic
+                            },
+                            {
+                                "attrCode":"signMobile(签署验证手机号)",
+                                "attrValue":this.formInline.mobile
                             }
                         ]
                         }
-
-                        if(this.formInline.role == '法人'){
-                            for (let index = 0; index < op.userEntityAttrDTOList.length; index++) {
-                                if(op.userEntityAttrDTOList[index].attrCode == "authorization(加盖单位公章的授权书)"){
-                                    op.userEntityAttrDTOList.splice(index,0)
-                                }
-                                
-                            }
-                        }
+                        
                         
                         localStorages.set('verificationInformation',this.formInline,1000*60*60)
                         // this.SET_REGISTER_COMPANY_PIC(op)

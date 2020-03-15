@@ -90,6 +90,19 @@ const mutations = {
 
             state.register.userEntityDTO.userEntityAttrDTOList = commsg.concat(vermsg)
 
+            
+                for (let index = 0; index < state.register.userEntityDTO.userEntityAttrDTOList.length; index++) {
+                    if(state.register.userEntityDTO.userEntityAttrDTOList[index].attrValue == "法人"){
+                        for (let j = 0; j < state.register.userEntityDTO.userEntityAttrDTOList.length; j++) {
+                            if(state.register.userEntityDTO.userEntityAttrDTOList[j].attrCode == "authorization(加盖单位公章的授权书)"){
+                                state.register.userEntityDTO.userEntityAttrDTOList.splice(j,1)
+                            }
+                        }
+                        
+                    }
+                    
+                }
+            
 
         }else{
             return 500

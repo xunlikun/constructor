@@ -200,13 +200,15 @@ export default {
                                     },
                                     style: {
                                         marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.down(params.row.contractPath)
-                                        }
                                     }
-                                }, '下载'),
+                                }, [h('a',{
+                                        attrs:{href:params.row.contractPath,target:'_blank'},
+                                        style:{
+                                            display:'inline-block',
+                                            width:'100%',
+                                            height:'24px',
+                                            color: '#fff'
+                                        }},'下载')]),
                                 h('Button', {
                                     props: {
                                         type: 'primary',
@@ -217,7 +219,7 @@ export default {
                                             this.checkSign(params.row)
                                         }
                                     }
-                                }, '签约')
+                                },  '签订')
                             ]);
                             }else{
                                 return h('div', [
@@ -228,13 +230,16 @@ export default {
                                         },
                                         style: {
                                             marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.down(params.row.contractPath)
-                                            }
                                         }
-                                    }, '下载')
+                                    }, [h('a',{
+                                        attrs:{href:params.row.contractPath,target:'_blank'},
+                                        style:{
+                                            display:'inline-block',
+                                            width:'100%',
+                                            height:'24px',
+                                            color: '#fff'
+                                        }
+                                    },'下载')])
                                 ]);
                             }
                             
@@ -280,7 +285,11 @@ export default {
             }
             console.log(signListCode)
             sign({verificationCode:this.formInline.verificationCode,ids:signListCode}).then( res => {
-                console.log(res)
+                if(res.status == 200){
+                    this.$Message.success('签约成功');
+                }else{
+                    this.$Message.error(res.msg);
+                }
                 this.currentSelections = []
                 this.init()
             } )
@@ -300,6 +309,7 @@ export default {
           this.contractData = data.records
           this.total = data.total
           this.current = data.page
+          this.currentSelections = []
         },
         @track.loading
         gotoDetail(query){
@@ -321,7 +331,7 @@ export default {
         },
         selection(selections){
             this.currentSelections = selections.filter((item,index,ary) => {
-                return item.contractType == 'constructor'
+                return item.contractType == 'constructor' && !item.isSigned
             })
         },
         confirm () {

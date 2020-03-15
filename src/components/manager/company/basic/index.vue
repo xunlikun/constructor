@@ -4,12 +4,12 @@
     <div class='main' v-if = 'data'>
         <Form ref="formInline" :model="data" :rules="ruleInline">
                     <FormItem prop="entityName" label="企业全称 (不可修改)">
-                        <Input type="text" v-model="data.entityName" placeholder="企业全称">
+                        <Input type="text" disabled v-model="data.entityName" placeholder="企业全称">
                             <Icon type="ios-contacts-outline" slot="prepend"/>
                         </Input>
                     </FormItem>
                     <FormItem prop="businessLicenseNumber(营业执照编号)" label="营业执照编号 (不可修改)">
-                        <Input type="text" v-model="data['businessLicenseNumber(营业执照编号)']" placeholder="营业执照编号">
+                        <Input type="text" disabled v-model="data['businessLicenseNumber(营业执照编号)']" placeholder="营业执照编号">
                             <Icon type="ios-card-outline" slot="prepend"/>
                         </Input>
                     </FormItem>

@@ -81,7 +81,6 @@
                     <FormItem prop="projectStatus" label="工程状态">
                         <Select v-model="formInline.projectStatus">
                             <Option value="0">在建</Option>
-                            <Option value="1">完工</Option>
                         </Select>
                     </FormItem>
                     <FormItem prop="projectManagerCode" label="项目经理">
@@ -107,9 +106,9 @@
                     <FormItem prop="startTime" label="开工日期">
                         <DatePicker type="datetime" placeholder="Select date and time" @on-change='(format)=>{formInline.startTime = format}' style="width: 200px"></DatePicker>
                     </FormItem>
-                    <FormItem prop="finishTime" label="完工日期">
+                    <!-- <FormItem prop="finishTime" label="完工日期">
                         <DatePicker type="datetime" placeholder="Select date and time" @on-change='(format)=>{formInline.finishTime = format}' style="width: 200px"></DatePicker>
-                    </FormItem>
+                    </FormItem> -->
                 </Form>
         </Modal>
     </div>
@@ -170,7 +169,7 @@ export default {
                     ]
                 },
             formInline:{
-
+                projectStatus:['0']
             },
             ruleInline:{
                 projectCode: [
@@ -202,7 +201,7 @@ export default {
                         render:(h, params) => {
                             return h('a', {on:{
                                 click: () => {
-                                    this.gotoDetail({id:params.row.id})
+                                    this.gotoDetail({id:params.row.id,calculate:'search'})
                                 }
                             }},params.row.projectCode);
                         }
@@ -232,6 +231,29 @@ export default {
                         render: (h, params) => {
                             return h('div', {},params.row.projectStatus == 1 ? params.row.finishTime : '');
                         }
+                    },
+                    {
+                        title: '操作',
+                        key: 'calculate',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.gotoDetail({id:params.row.id,calculate:'editor'})
+                                        }
+                                    }
+                                }, '编辑')
+                            ]);
+                        }
+ 
                     }
                 ]
         }
@@ -246,6 +268,10 @@ export default {
         ...mapActions(['getCompanyInfo','getProjectList']),
         log(formart){
             console.log(formart)
+        },
+        @track.loading
+        gotoDetail(query){
+            this.$router.push({path:'/manager/project/projectDetail',query:query})
         },
         remoteMethod1(query){
                     this.loading1 = true;
@@ -338,7 +364,9 @@ export default {
                     })[0].userName
                 }
                 
+                if(this.formInline.projectStatus == 0){
 
+                }
                 console.log(this.formInline)
             }
         }
